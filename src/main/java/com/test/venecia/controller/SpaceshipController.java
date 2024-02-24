@@ -31,13 +31,13 @@ public class SpaceshipController {
 
     @Autowired
     SpaceshipService spaceshipService;
-//    private final KafkaTemplate<String, String> kafkaTemplate;
-//    private static final String TOPIC = "spaceship-search-requests";
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private static final String TOPIC = "spaceship-search-requests";
 
     @Autowired
-    public SpaceshipController(SpaceshipService spaceshipService){//}, KafkaTemplate<String, String> kafkaTemplate) {
+    public SpaceshipController(SpaceshipService spaceshipService, KafkaTemplate<String, String> kafkaTemplate) {
         this.spaceshipService = spaceshipService;
-//        this.kafkaTemplate = kafkaTemplate;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Cacheable(value = "spaceshipCache", key = "#id")
@@ -132,7 +132,7 @@ public class SpaceshipController {
     public ResponseEntity delete(@PathVariable("id") Long id){
         log.info(" DELETE /api/spaceships/" +id);
         if(spaceshipService.delete(id)) {
-//                kafkaTemplate.send(TOPIC, "Se ha eliminado el id: "  + id );
+                kafkaTemplate.send(TOPIC, "Se ha eliminado el id: "  + id );
             return new ResponseEntity(HttpStatus.OK);
         }else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
