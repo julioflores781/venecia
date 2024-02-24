@@ -1,7 +1,7 @@
 package com.test.venecia;
 
 
-import com.test.venecia.persistence.SpaceshipRepository;
+import com.test.venecia.persistence.repository.SpaceshipRepository;
 import com.test.venecia.persistence.entity.Spaceship;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ public class SpaceshipControllerIntegrationTests {
         Spaceship spaceship = new Spaceship("Name to update Falcon", "Series to modify", "Movie to modify", "Model to modify", 1);
         spaceshipRepository.save(spaceship);
 
-        List<Spaceship> spaceships = spaceshipRepository.getAll();
+        List<Spaceship> spaceships = (List<Spaceship>) spaceshipRepository.findAll();
         Spaceship ultimaSpaceship = spaceships.get(spaceships.size() - 1);
         ultimoId = ultimaSpaceship.getId();
 
@@ -110,7 +110,7 @@ public class SpaceshipControllerIntegrationTests {
         assertEquals(updatedSpaceship.getModel(), responseBody.getModel());
         assertEquals(updatedSpaceship.getCrewCapacity(), responseBody.getCrewCapacity());
 
-        spaceshipRepository.delete(id);
+        spaceshipRepository.deleteById(id);
 
     }
 

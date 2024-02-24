@@ -1,5 +1,6 @@
 package com.test.venecia.controller;
 
+import com.test.venecia.exception.KafkaSendFailedException;
 import com.test.venecia.persistence.entity.Spaceship;
 import com.test.venecia.service.SpaceshipService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,21 +48,22 @@ public class SpaceshipController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Nave not found: No se encontraron naves espaciales que coincidan con el criterio de búsqueda")
     })
-    public ResponseEntity<Spaceship> getById( @PathVariable("id") Long id){
-        log.info("/spaceships/" + id);
+    public ResponseEntity<Spaceship> getById(@PathVariable("id") Long id) {
+        log.info("GET /api/spaceships/" + id);
         return spaceshipService.getById(id)
                 .map(nave -> new ResponseEntity<>(nave, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/pageable")
+    @Cacheable(value = "spaceshipCache", key = "#pageable")
     @Operation(summary = "Get pageable list of spaceships", description = "Obtains a pageable list of spaceships")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK")
     })
-    public ResponseEntity<Page<Spaceship>> getSpaceShipPageable( @ParameterObject Pageable pageable) {
+    public ResponseEntity<Page<Spaceship>> getSpaceShipPageable(@ParameterObject Pageable pageable) {
         log.info(" GET /api/spaceships/" + pageable);
-        return ResponseEntity.ok(spaceshipService.spaceShipPageable( pageable));
+        return ResponseEntity.ok(spaceshipService.spaceShipPageable(pageable));
     }
 
     @GetMapping
@@ -70,21 +72,22 @@ public class SpaceshipController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Nave not found: No se encontraron naves espaciales que coincidan con el criterio de búsqueda")
     })
-    public ResponseEntity<List<Spaceship>> getByNameContaining(@RequestParam("keyword") String keyword){
-        log.info(" GET /api/spaceships/?keyword=" +keyword );
+    public ResponseEntity<List<Spaceship>> getByNameContaining(@RequestParam("keyword") String keyword) {
+        log.info(" GET /api/spaceships/?keyword=" + keyword);
 
-        return  spaceshipService.findByNameContaining(keyword)
-                .map(spaceship -> new ResponseEntity<>(spaceship,HttpStatus.OK))
+        return spaceshipService.findByNameContaining(keyword)
+                .map(spaceship -> new ResponseEntity<>(spaceship, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @Operation(summary = "Get all spaceships", description = "Gets a list of all spaceships")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK")
     })
-    public ResponseEntity<List<Spaceship>> getAll(){
+    public ResponseEntity<List<Spaceship>> getAll() {
         log.info(" GET /api/spaceships");
-        return new ResponseEntity<>(spaceshipService.getAll(),HttpStatus.OK);
+        return new ResponseEntity<>(spaceshipService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping("/")
@@ -110,16 +113,17 @@ public class SpaceshipController {
         log.info("POST /api/spaceships");
         return new ResponseEntity<>(spaceshipService.create(spaceship), HttpStatus.CREATED);
     }
+
     @PutMapping("/{id}")
     @Operation(summary = "Update a spaceship by ID", description = "Updates a spaceship with the specified ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Nave not found: No se encontró la nave espacial con el ID especificado")
     })
-    public ResponseEntity<Spaceship> update(@PathVariable("id") Long id, @RequestBody() Spaceship spaceship){
-        log.info(" PUT /api/spaceships/"+id);
-        return  spaceshipService.update(spaceship,id)
-                .map(nave -> new ResponseEntity<>(nave,HttpStatus.OK))
+    public ResponseEntity<Spaceship> update(@PathVariable("id") Long id, @RequestBody() Spaceship spaceship) {
+        log.info(" PUT /api/spaceships/" + id);
+        return spaceshipService.update(spaceship, id)
+                .map(nave -> new ResponseEntity<>(nave, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -129,14 +133,19 @@ public class SpaceshipController {
             @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode = "404", description = "Nave not found: No se encontró la nave espacial con el ID especificado")
     })
-    public ResponseEntity delete(@PathVariable("id") Long id){
-        log.info(" DELETE /api/spaceships/" +id);
-        if(spaceshipService.delete(id)) {
-                kafkaTemplate.send(TOPIC, "Se ha eliminado el id: "  + id );
-            return new ResponseEntity(HttpStatus.OK);
-        }else {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+    public ResponseEntity delete(@PathVariable("id") Long id) {
+        try {
+            log.info(" DELETE /api/spaceships/" + id);
+            if (spaceshipService.delete(id)) {
+                kafkaTemplate.send(TOPIC, "Se ha eliminado el id: " + id);
+                return new ResponseEntity(HttpStatus.OK);
+            } else {
+                return new ResponseEntity(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            throw new KafkaSendFailedException("Error al enviar mensaje a Kafka", ex);
         }
+
     }
 
 }

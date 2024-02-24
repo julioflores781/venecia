@@ -2,11 +2,11 @@ package com.test.venecia.persistence.entity;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 
 @Entity
+@Data
 public class Spaceship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,53 +49,5 @@ public class Spaceship {
                 ", model='" + model + '\'' +
                 ", crewCapacity=" + crewCapacity +
                 '}';
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSeries() {
-        return series;
-    }
-
-    public void setSeries(String series) {
-        this.series = series;
-    }
-
-    public String getMovie() {
-        return movie;
-    }
-
-    public void setMovie(String movie) {
-        this.movie = movie;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public int getCrewCapacity() {
-        return crewCapacity;
-    }
-
-    public void setCrewCapacity(int crewCapacity) {
-        this.crewCapacity = crewCapacity;
     }
 }

@@ -24,14 +24,3 @@ services:
       - ./target:/app/target
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-
-#  keycloak:
-#    image: jboss/keycloak
-#    environment:
-#      - KEYCLOAK_USER=admin
-#      - KEYCLOAK_PASSWORD=admin
-#      - KEYCLOAK_IMPORT=/config/realm-config.json
-#    ports:
-#      - "8081:8080"
-#    volumes:
-#      - ./src/main/resources/templates/realm-config.json:/config/realm-config.json
