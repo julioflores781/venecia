@@ -30,8 +30,5 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
 
-      - name: Build with Maven
-        run: mvn clean package -Dspring.profiles.active=github-actions
-
       - name: Run tests
         run: mvn test -Dspring.profiles.active=github-actions
