@@ -17,9 +17,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install OpenJDK 21 early access
+      - name: Install OpenJDK 22 early access
         run: |
-          sudo apt-get install -y openjdk:22-ea-21-jdk
+          sudo apt-get install -y openjdk-22-ea-21-jdk
           echo "JAVA_HOME=$(which java)" >> $GITHUB_ENV
           echo "::add-path::$(which java)"
 
