@@ -92,11 +92,14 @@ Para poder utilizar esta aplicación, se necesitan los siguientes requisitos:
 
 La API proporciona los siguientes endpoints para gestionar naves espaciales:
 
-- **GET /api/spaceships**: Obtiene todas las naves espaciales.
+
+- **POST /api/auth/register**: Registrarte y autenticarte.
+- **POST /api/auth/login**: Autenticarte.
+- **GET /api/spaceships/**: Obtiene todas las naves espaciales.
 - **GET /api/spaceships/{id}**: Obtiene una nave espacial por su ID.
 - **GET /api/spaceships?keyword={keyword}**: Busca naves espaciales por nombre.
 - **GET /api/spaceships/pageable?page=0&size=2'**: Obtiene naves espaciales con paginación.
-- **POST /api/spaceships**: Crea una nueva nave espacial.
+- **POST /api/spaceships/**: Crea una nueva nave espacial.
 - **PUT /api/spaceships/{id}**: Actualiza una nave espacial existente.
 - **DELETE /api/spaceships/{id}**: Elimina una nave espacial por su ID.
 
