@@ -3,6 +3,7 @@ package com.test.venecia.service;
 import com.test.venecia.exception.SpaceshipNotFoundException;
 import com.test.venecia.persistence.repository.SpaceshipRepository;
 import com.test.venecia.persistence.entity.Spaceship;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,11 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class SpaceshipService {
 
 
-    @Autowired
-    private SpaceshipRepository spaceshipRepository;
+    private final SpaceshipRepository spaceshipRepository;
 
     public Optional<Spaceship> getById(Long id) {
         Optional<Spaceship> spaceships = spaceshipRepository.findById(id);

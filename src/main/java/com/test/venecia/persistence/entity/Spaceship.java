@@ -2,11 +2,16 @@ package com.test.venecia.persistence.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Data
+@ToString
 public class Spaceship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +33,6 @@ public class Spaceship {
     @Column(name = "CREW_CAPACITY")
     private int crewCapacity;
 
-    public Spaceship() {
-    }
 
     public Spaceship(String name, String series, String movie, String model, int crewCapacity) {
         this.name = name;
@@ -39,15 +42,4 @@ public class Spaceship {
         this.crewCapacity = crewCapacity;
     }
 
-    @Override
-    public String toString() {
-        return "Spaceship{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", series='" + series + '\'' +
-                ", movie='" + movie + '\'' +
-                ", model='" + model + '\'' +
-                ", crewCapacity=" + crewCapacity +
-                '}';
-    }
 }

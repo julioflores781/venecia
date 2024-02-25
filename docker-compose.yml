@@ -1,5 +1,21 @@
 version: '3'
 services:
+  venecia-db:
+    image: mcr.microsoft.com/mssql/server:2022-RTM-GDR1-ubuntu-20.04
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: Venecia1234
+      MSSQL_PID: Developer
+    volumes:
+      - ./db.megration/mdf:/var/opt/mssql/data
+      - ./db.megration/log:/var/opt/mssql/data
+      - ./src/main/resources/db.migration/setup_sql_scripts.sql:/setup_sql_scripts.sql
+    command: [ "/bin/bash", "-c", "/opt/mssql/bin/sqlservr & sleep 10s && /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Veecia1234 -d master -i setup_sql_scripts.sql & sleep infinity" ]
+    networks:
+      - default
+
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
@@ -24,3 +40,8 @@ services:
       - ./target:/app/target
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+
+volumes:
+  mdf:
+  log:
+  sql-scripts:
